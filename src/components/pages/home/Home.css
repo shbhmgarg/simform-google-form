@@ -1,0 +1,60 @@
+.recent-form-text,
+.recent-docs {
+  margin-left: 160px;
+  margin-right: 160px;
+  background-color: white;
+}
+
+.doc-card {
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  width: 200px;
+  margin-right: 20px;
+}
+
+.doc-card-heading {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.doc-card-value {
+  font-size: 14px;
+}
+
+.doc-card-image:hover {
+  border: 1px solid #6e2594;
+}
+.doc-card-image {
+  box-sizing: border-box;
+  height: 150px;
+  width: 200px;
+}
+
+.doc-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 15px;
+}
+
+.doc-detail {
+  width: 100%;
+}
+
+.doc-detail span {
+  white-space: nowrap;
+}
+
+.doc-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
+.content-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
