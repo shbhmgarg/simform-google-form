@@ -11,10 +11,14 @@ import {
 } from '@material-ui/core';
 import { Subject } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import uuid from 'react-uuid';
+import { addQuestion, updateQuestion } from '../../../redux/actions/question';
 import './FormQuestionModal.css';
 
-const FormQuestionModal = ({ addQuestion }) => {
+const FormQuestionModal = ({ close }) => {
+  const dispatch = useDispatch();
+  const current = useSelector((state) => state.question.current);
   const [newQuestion, setNewQuestion] = useState({
     id: uuid(),
     question: '',
@@ -22,8 +26,19 @@ const FormQuestionModal = ({ addQuestion }) => {
     options: ''
   });
   const [optionsArray, setOptionsArray] = useState([]);
-
   const { id, question, type, options } = newQuestion;
+
+  useEffect(() => {
+    if (current) {
+      let currentQuestion = current[0];
+      setNewQuestion({
+        id: currentQuestion.questionId,
+        question: currentQuestion.questionText,
+        type: currentQuestion.questionType,
+        options: currentQuestion.options.map((q) => q.optionText).join('\n')
+      });
+    }
+  }, [current]);
 
   const valueChanged = (e) => {
     if (e.target.name === 'options') {
@@ -45,7 +60,13 @@ const FormQuestionModal = ({ addQuestion }) => {
       questionType: type,
       options: arr
     };
-    addQuestion(newQuestionValue);
+    if (current) {
+      dispatch(updateQuestion(newQuestionValue));
+    } else {
+      dispatch(addQuestion(newQuestionValue));
+    }
+    close();
+    //addQuestion(newQuestionValue);
   };
 
   return (
@@ -115,7 +136,7 @@ const FormQuestionModal = ({ addQuestion }) => {
               value={options}
               onChange={valueChanged}
             />
-            <div class='helper-text'>
+            <div className='helper-text'>
               Please enter each choices in separate lines.
             </div>
           </Grid>
@@ -128,7 +149,7 @@ const FormQuestionModal = ({ addQuestion }) => {
             size='medium'
             onClick={submitQuestion}
           >
-            Add
+            {current ? 'Update' : 'Add'}
           </Button>
         </Grid>
       </Grid>

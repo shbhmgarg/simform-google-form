@@ -10,39 +10,72 @@ import {
 import {
   AddCircleOutlineRounded,
   Close,
-  EditOutlined
+  DeleteOutlined,
+  EditOutlined,
+  Save
 } from '@material-ui/icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FormQuestionModal from '../form-question-modal/FormQuestionModal';
 import './FormQuestions.css';
-
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import {
+  clearCurrentQuestion,
+  setCurrentQuestion,
+  deleteQuestion,
+  clearFormQuestions,
+  currentFormName
+} from '../../../redux/actions/question';
+import { createForm } from '../../../redux/actions/form';
+import { useParams, useNavigate } from 'react-router-dom';
 const FormQuestions = () => {
-  const [questions, setQuestions] = useState([
-    {
-      questionId: 1,
-      questionText: 'What is the capital of Madhya Pradesh?',
-      questionType: 'radio',
-      options: [
-        { optionText: 'Raipur' },
-        { optionText: 'Gwalior' },
-        { optionText: 'Bhopal' },
-        { optionText: 'Indore' }
-      ]
-    }
-  ]);
+  const navigate = useNavigate();
+  const questions = useSelector((state) => state.question.questions);
+  const currentQuestion = useSelector((state) => state.question.current);
+  const formName = useSelector((state) => state.question.formName);
+  const dispatch = useDispatch();
+  const params = useParams();
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    dispatch(clearCurrentQuestion());
+  };
 
   const editQuestion = (quesId) => {
-    console.log(quesId);
+    dispatch(setCurrentQuestion(quesId));
+    handleOpen();
+  };
+
+  const deleteQues = (quesId) => {
+    dispatch(deleteQuestion(quesId));
+  };
+
+  const nameChange = (e) => {
+    dispatch(currentFormName(e.target.value));
+  };
+
+  const saveForm = () => {
+    if (formName === '') {
+      alert('Please enter form name');
+      return false;
+    }
+    const form = {
+      formId: params.id,
+      name: formName,
+      questions: questions,
+      createdDate: new Date()
+    };
+    dispatch(createForm(form));
+    dispatch(clearFormQuestions());
+    navigate('/');
   };
 
   const questionsUI = () => {
     return questions.map((ques, i) => {
       return (
-        <div className='saved-questions add-border'>
+        <div key={i} className='saved-questions add-border'>
           <div className='edit-question'>
             <Typography
               style={{
@@ -55,9 +88,14 @@ const FormQuestions = () => {
             >
               {i + 1}. {ques.questionText}
             </Typography>
-            <IconButton onClick={() => editQuestion(ques.questionId)}>
-              <EditOutlined />
-            </IconButton>
+            <div class='action-buttons'>
+              <IconButton onClick={() => editQuestion(ques.questionId)}>
+                <EditOutlined color='primary' />
+              </IconButton>
+              <IconButton onClick={() => deleteQues(ques.questionId)}>
+                <DeleteOutlined color='error' />
+              </IconButton>
+            </div>
           </div>
 
           {ques.questionType === 'text' && (
@@ -101,12 +139,6 @@ const FormQuestions = () => {
     });
   };
 
-  const addNewQuestion = (value) => {
-    console.log(value);
-    setQuestions([...questions, value]);
-    handleClose();
-  };
-
   return (
     <div>
       <div className='question-form'>
@@ -117,9 +149,11 @@ const FormQuestions = () => {
             <div className='question-form-top'>
               <input
                 type='text'
-                placeholder='Untitled Document'
+                placeholder='Untitled Form'
                 className='question-form-top-name'
                 style={{ color: 'black' }}
+                value={formName}
+                onChange={nameChange}
               />
               <Button
                 style={{ width: '40%', marginLeft: '20px' }}
@@ -141,7 +175,7 @@ const FormQuestions = () => {
             maxWidth='sm'
           >
             <DialogTitle className='add-question-modal-title'>
-              Add Question
+              {currentQuestion ? 'Update' : 'Add'} Question
               <IconButton
                 aria-label='close'
                 onClick={handleClose}
@@ -156,9 +190,21 @@ const FormQuestions = () => {
               </IconButton>
             </DialogTitle>
             <DialogContent>
-              <FormQuestionModal addQuestion={addNewQuestion} />
+              <FormQuestionModal close={handleClose} />
             </DialogContent>
           </Dialog>
+        </div>
+        <div className='form-footer'>
+          <Button
+            style={{ width: '100%', marginTop: '20px' }}
+            onClick={saveForm}
+            variant='contained'
+            startIcon={<Save />}
+            color='primary'
+            disabled={questions.length > 0 ? false : true}
+          >
+            Save Form
+          </Button>
         </div>
       </div>
     </div>
