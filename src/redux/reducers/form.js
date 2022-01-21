@@ -1,9 +1,13 @@
-import { CREATE_FORM, SET_CURRENT_FORM, CURRENT_FORM_NAME } from '../types';
+import {
+  CREATE_FORM,
+  SET_CURRENT_FORM,
+  CURRENT_FORM_NAME,
+  DELETE_FORM
+} from '../types';
 
 const initialState = {
   current: null,
-  forms: [],
-  currentName: ''
+  forms: []
 };
 
 export default function formsReducer(state = initialState, action) {
@@ -18,6 +22,11 @@ export default function formsReducer(state = initialState, action) {
       return {
         ...state,
         current: state.forms.filter((form) => form.formId === action.payload)
+      };
+    case DELETE_FORM:
+      return {
+        ...state,
+        forms: state.forms.filter((f) => f.formId !== action.payload)
       };
     default:
       return state;

@@ -6,15 +6,28 @@ import {
   Storage
 } from '@material-ui/icons';
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { deleteForm, setCurrentForm } from '../../../redux/actions/form';
 import FormTemplate from '../../layout/form-template/FormTemplate';
 import './Home.css';
 import recentDoc from './recentDoc.png';
 
 const Home = () => {
   const forms = useSelector((state) => state.form.forms);
-  console.log(forms);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const edit = (formId) => {
+    dispatch(setCurrentForm(formId));
+    navigate(`/update-form/${formId}`);
+  };
+
+  const deleteExistingForm = (formId) => {
+    dispatch(deleteForm(formId));
+  };
+
   const recentForms = () => {
     return (
       forms &&
@@ -53,10 +66,13 @@ const Home = () => {
                 </div>
                 <div class='doc-detail'>
                   <div class='action-buttons'>
-                    <IconButton size='small'>
+                    <IconButton size='small' onClick={() => edit(form.formId)}>
                       <EditOutlined color='primary' />
                     </IconButton>
-                    <IconButton size='small'>
+                    <IconButton
+                      size='small'
+                      onClick={() => deleteExistingForm(form.formId)}
+                    >
                       <DeleteOutlined color='error' />
                     </IconButton>
                   </div>
@@ -72,10 +88,18 @@ const Home = () => {
   return (
     <>
       <FormTemplate />
-      <p className='recent-form-text'>Recent Forms</p>
+      <p className='recent-form-text' style={{ fontSize: '20px' }}>
+        Recent Forms
+      </p>
       <div class='recent-docs'>
         <Grid container spacing={2} className='modal-body'>
-          {recentForms()}
+          {forms && forms.length > 0 ? (
+            recentForms()
+          ) : (
+            <Grid item xs={4}>
+              Please add new form
+            </Grid>
+          )}
         </Grid>
       </div>
     </>

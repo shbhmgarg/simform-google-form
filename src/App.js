@@ -23,6 +23,7 @@ function App() {
               }
             />
             <Route path='/create-form/:id' element={<CreateForm />} />
+            <Route path='/update-form/:id' element={<CreateForm />} />
           </Routes>
         </Router>
       </div>
