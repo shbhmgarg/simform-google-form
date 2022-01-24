@@ -1,8 +1,9 @@
 import {
-  CREATE_FORM,
-  SET_CURRENT_FORM,
-  CURRENT_FORM_NAME,
-  DELETE_FORM
+  CREATE_FORM_SUCCEEDED,
+  GET_FORMS_SUCCEEDED,
+  CLEAR_CURRENT_FORM,
+  SET_CURRENT_FORM_SUCCEEDED,
+  DELETE_FORM_SUCCEEDED
 } from '../types';
 
 const initialState = {
@@ -12,21 +13,26 @@ const initialState = {
 
 export default function formsReducer(state = initialState, action) {
   switch (action.type) {
-    case CREATE_FORM:
-      console.log(action);
+    case CREATE_FORM_SUCCEEDED:
       return {
         ...state,
         forms: [...state.forms, action.payload]
       };
-    case SET_CURRENT_FORM:
+    case GET_FORMS_SUCCEEDED:
+    case DELETE_FORM_SUCCEEDED:
       return {
         ...state,
-        current: state.forms.filter((form) => form.formId === action.payload)
+        forms: action.payload
       };
-    case DELETE_FORM:
+    case SET_CURRENT_FORM_SUCCEEDED:
       return {
         ...state,
-        forms: state.forms.filter((f) => f.formId !== action.payload)
+        current: action.payload
+      };
+    case CLEAR_CURRENT_FORM:
+      return {
+        ...state,
+        current: null
       };
     default:
       return state;

@@ -5,11 +5,22 @@ import './FormTemplate.css';
 import blank from './blank.png';
 import { useNavigate } from 'react-router-dom';
 import uuid from 'react-uuid';
+import { useDispatch } from 'react-redux';
+import {
+  currentFormName,
+  setUpdateFormQuestions
+} from '../../../redux/actions/question';
+import { clearCurrentForm } from '../../../redux/actions/form';
 
 const FormTemplate = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const createForm = () => {
     const id = uuid();
+    dispatch(currentFormName(''));
+    dispatch(setUpdateFormQuestions([]));
+    dispatch(clearCurrentForm());
     navigate(`/create-form/${id}`);
   };
 

@@ -1,15 +1,13 @@
 import { Grid, IconButton } from '@material-ui/core';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  MoreVert,
-  Storage
-} from '@material-ui/icons';
-import React from 'react';
+import { DeleteOutlined, EditOutlined } from '@material-ui/icons';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { deleteForm, setCurrentForm } from '../../../redux/actions/form';
+import {
+  DELETE_FORM_REQUESTED,
+  GET_FORMS_REQUESTED
+} from '../../../redux/types';
 import FormTemplate from '../../layout/form-template/FormTemplate';
 import './Home.css';
 import recentDoc from './recentDoc.png';
@@ -20,20 +18,23 @@ const Home = () => {
   const navigate = useNavigate();
 
   const edit = (formId) => {
-    dispatch(setCurrentForm(formId));
     navigate(`/update-form/${formId}`);
   };
 
   const deleteExistingForm = (formId) => {
-    dispatch(deleteForm(formId));
+    dispatch({ type: DELETE_FORM_REQUESTED, payload: formId });
   };
+
+  useEffect(() => {
+    dispatch({ type: GET_FORMS_REQUESTED });
+  }, [dispatch]);
 
   const recentForms = () => {
     return (
       forms &&
       forms.map((form, i) => {
         return (
-          <Grid item xs={4} key={i}>
+          <Grid item lg={6} md={6} key={i}>
             <div className='doc-card'>
               <img
                 src={recentDoc}
@@ -41,37 +42,35 @@ const Home = () => {
                 className='doc-card-image'
               />
               <div className='doc-card-content'>
-                <div class='doc-detail'>
-                  <span class='doc-card-heading'>Name: </span>
-                  <span class='doc-card-value'>{form.name}</span>
+                <div className='doc-detail'>
+                  <span className='doc-card-heading'>Name: </span>
+                  <span className='doc-card-value'>{form.name}</span>
                 </div>
-                <div class='doc-detail'>
-                  <span class='doc-card-heading'>URL: </span>
-                  <span class='doc-card-value'>
-                    <Link to={`/submit/${form.formId}`}>
-                      Link to Submission
-                    </Link>
+                <div className='doc-detail'>
+                  <span className='doc-card-heading'>URL: </span>
+                  <span className='doc-card-value'>
+                    <Link to={`/submit/${form.id}`}>Link to Submission</Link>
                   </span>
                 </div>
-                <div class='doc-detail'>
-                  <span class='doc-card-heading'>Created At: </span>
-                  <span class='doc-card-value' style={{ display: 'block' }}>
-                    {form.createdDate.toLocaleDateString()}{' '}
-                    {form.createdDate.toLocaleTimeString()}
+                <div className='doc-detail'>
+                  <span className='doc-card-heading'>Created At: </span>
+                  <span className='doc-card-value' style={{ display: 'block' }}>
+                    {new Date(form.createdDate).toLocaleDateString()}{' '}
+                    {new Date(form.createdDate).toLocaleTimeString()}
                   </span>
                 </div>
-                <div class='doc-detail'>
-                  <span class='doc-card-heading'>Total Responses: </span>
-                  <span class='doc-card-value'>test</span>
+                <div className='doc-detail'>
+                  <span className='doc-card-heading'>Total Responses: </span>
+                  <span className='doc-card-value'>test</span>
                 </div>
-                <div class='doc-detail'>
-                  <div class='action-buttons'>
-                    <IconButton size='small' onClick={() => edit(form.formId)}>
+                <div className='doc-detail'>
+                  <div className='action-buttons'>
+                    <IconButton size='small' onClick={() => edit(form.id)}>
                       <EditOutlined color='primary' />
                     </IconButton>
                     <IconButton
                       size='small'
-                      onClick={() => deleteExistingForm(form.formId)}
+                      onClick={() => deleteExistingForm(form.id)}
                     >
                       <DeleteOutlined color='error' />
                     </IconButton>
@@ -91,7 +90,7 @@ const Home = () => {
       <p className='recent-form-text' style={{ fontSize: '20px' }}>
         Recent Forms
       </p>
-      <div class='recent-docs'>
+      <div className='recent-docs'>
         <Grid container spacing={2} className='modal-body'>
           {forms && forms.length > 0 ? (
             recentForms()

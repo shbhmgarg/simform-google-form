@@ -14,7 +14,7 @@ import {
   EditOutlined,
   Save
 } from '@material-ui/icons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import FormQuestionModal from '../form-question-modal/FormQuestionModal';
 import './FormQuestions.css';
 import { useSelector } from 'react-redux';
@@ -24,15 +24,21 @@ import {
   setCurrentQuestion,
   deleteQuestion,
   clearFormQuestions,
-  currentFormName
+  currentFormName,
+  setUpdateFormQuestions
 } from '../../../redux/actions/question';
-import { createForm } from '../../../redux/actions/form';
 import { useParams, useNavigate } from 'react-router-dom';
+import {
+  CREATE_FORM_REQESTED,
+  SET_CURRENT_FORM_REQUESTED,
+  UPDATE_FORM_REQUESTED
+} from '../../../redux/types';
 const FormQuestions = () => {
   const navigate = useNavigate();
   const questions = useSelector((state) => state.question.questions);
   const currentQuestion = useSelector((state) => state.question.current);
   const formName = useSelector((state) => state.question.formName);
+  const currentForm = useSelector((state) => state.form.current);
   const dispatch = useDispatch();
   const params = useParams();
 
@@ -42,6 +48,10 @@ const FormQuestions = () => {
     setOpen(false);
     dispatch(clearCurrentQuestion());
   };
+
+  useEffect(() => {
+    dispatch({ type: SET_CURRENT_FORM_REQUESTED, payload: params.id });
+  }, [dispatch, params.id]);
 
   const editQuestion = (quesId) => {
     dispatch(setCurrentQuestion(quesId));
@@ -62,15 +72,27 @@ const FormQuestions = () => {
       return false;
     }
     const form = {
-      formId: params.id,
+      id: params.id,
       name: formName,
       questions: questions,
       createdDate: new Date()
     };
-    dispatch(createForm(form));
+    if (currentForm) {
+      dispatch({ type: UPDATE_FORM_REQUESTED, payload: form });
+    } else {
+      dispatch({ type: CREATE_FORM_REQESTED, payload: form });
+    }
     dispatch(clearFormQuestions());
     navigate('/');
   };
+
+  useEffect(() => {
+    if (currentForm) {
+      let currentFormValue = currentForm;
+      dispatch(currentFormName(currentFormValue.name));
+      dispatch(setUpdateFormQuestions(currentFormValue.questions));
+    }
+  }, [currentForm]);
 
   const questionsUI = () => {
     return questions.map((ques, i) => {
@@ -88,7 +110,7 @@ const FormQuestions = () => {
             >
               {i + 1}. {ques.questionText}
             </Typography>
-            <div class='action-buttons'>
+            <div className='action-buttons'>
               <IconButton onClick={() => editQuestion(ques.questionId)}>
                 <EditOutlined color='primary' />
               </IconButton>
@@ -99,7 +121,12 @@ const FormQuestions = () => {
           </div>
 
           {ques.questionType === 'text' && (
-            <input type='text' className='answer' placeholder='Answer' />
+            <input
+              type='text'
+              className='answer'
+              placeholder='Answer'
+              disabled
+            />
           )}
 
           {ques.options &&
@@ -203,7 +230,7 @@ const FormQuestions = () => {
             color='primary'
             disabled={questions.length > 0 ? false : true}
           >
-            Save Form
+            {currentForm ? 'Update' : 'Add'} Form
           </Button>
         </div>
       </div>

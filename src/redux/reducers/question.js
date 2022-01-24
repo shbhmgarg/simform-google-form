@@ -1,12 +1,12 @@
 import {
   ADD_QUESTION,
   CLEAR_CURRENT_QUESTION,
-  GET_QUESTION,
   SET_CURRENT_QUESTION,
   UPDATE_QUESTION,
   DELETE_QUESTION,
   CURRENT_FORM_NAME,
-  CLEAR_FORM
+  CLEAR_FORM,
+  SET_UPDATE_FORM_QUESTIONS
 } from '../types';
 
 const initialState = {
@@ -61,6 +61,11 @@ export default function questionsReducer(state = initialState, action) {
       return {
         ...state,
         formName: action.payload
+      };
+    case SET_UPDATE_FORM_QUESTIONS:
+      return {
+        ...state,
+        questions: action.payload
       };
     default:
       return state;

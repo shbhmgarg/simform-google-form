@@ -6,7 +6,8 @@ import {
   UPDATE_QUESTION,
   DELETE_QUESTION,
   CURRENT_FORM_NAME,
-  CLEAR_FORM
+  CLEAR_FORM,
+  SET_UPDATE_FORM_QUESTIONS
 } from '../types';
 
 export const getQuestion = () => ({
@@ -44,4 +45,9 @@ export const clearFormQuestions = () => ({
 export const currentFormName = (name) => ({
   type: CURRENT_FORM_NAME,
   payload: name
+});
+
+export const setUpdateFormQuestions = (questions) => ({
+  type: SET_UPDATE_FORM_QUESTIONS,
+  payload: questions
 });
