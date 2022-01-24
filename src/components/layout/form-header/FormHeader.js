@@ -4,9 +4,8 @@ import logo from '../header/logo.png';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-const FormHeader = () => {
+const FormHeader = ({ nameDisable }) => {
   const formName = useSelector((state) => state.question.formName);
-
   return (
     <div className='form-header'>
       <div className='form-header-left'>
@@ -24,6 +23,7 @@ const FormHeader = () => {
           placeholder='Untitled Form'
           value={formName}
           className='form-name'
+          disabled={nameDisable}
         />
       </div>
     </div>

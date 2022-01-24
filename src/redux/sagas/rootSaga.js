@@ -4,6 +4,7 @@ import {
   DELETE_FORM_REQUESTED,
   GET_FORMS_REQUESTED,
   SET_CURRENT_FORM_REQUESTED,
+  SUBMIT_FORM_REQUEST,
   UPDATE_FORM_REQUESTED
 } from '../types';
 import {
@@ -13,6 +14,7 @@ import {
   getForms,
   updateFormById
 } from './form';
+import { submitResponse } from './response';
 
 export function* createFormSaga() {
   yield takeLatest(CREATE_FORM_REQESTED, createNewForm);
@@ -34,12 +36,17 @@ export function* deleteFormByIdSaga() {
   yield takeLatest(DELETE_FORM_REQUESTED, deleteFormById);
 }
 
+export function* submitResponseSaga() {
+  yield takeLatest(SUBMIT_FORM_REQUEST, submitResponse);
+}
+
 export function* RootSaga() {
   yield all([
     fork(createFormSaga),
     fork(getFormsSaga),
     fork(getFormByIdSaga),
     fork(updateFormByIdSaga),
-    fork(deleteFormByIdSaga)
+    fork(deleteFormByIdSaga),
+    fork(submitResponseSaga)
   ]);
 }

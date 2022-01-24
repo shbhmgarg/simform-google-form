@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CreateForm from './components/pages/create-form/CreateForm';
 import { Provider } from 'react-redux';
 import store from './redux/configureStore';
+import SubmitForm from './components/pages/submit-form/SubmitForm';
+import FormSubmitted from './components/pages/form-submitted/FormSubmitted';
 
 function App() {
   return (
@@ -24,6 +26,16 @@ function App() {
             />
             <Route path='/create-form/:id' element={<CreateForm />} />
             <Route path='/update-form/:id' element={<CreateForm />} />
+            <Route path='/submit/:id' element={<SubmitForm />} />
+            <Route
+              path='/submitted'
+              element={
+                <>
+                  <Header />
+                  <FormSubmitted />
+                </>
+              }
+            />
           </Routes>
         </Router>
       </div>

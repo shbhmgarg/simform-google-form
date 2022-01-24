@@ -5,7 +5,7 @@ import FormQuestions from '../../layout/form-questions/FormQuestions';
 const CreateForm = () => {
   return (
     <>
-      <FormHeader />
+      <FormHeader nameDisable={false} />
       <FormQuestions />
     </>
   );

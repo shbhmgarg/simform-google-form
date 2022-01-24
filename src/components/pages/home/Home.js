@@ -61,7 +61,7 @@ const Home = () => {
                 </div>
                 <div className='doc-detail'>
                   <span className='doc-card-heading'>Total Responses: </span>
-                  <span className='doc-card-value'>test</span>
+                  <span className='doc-card-value'>{form.totalResponses}</span>
                 </div>
                 <div className='doc-detail'>
                   <div className='action-buttons'>

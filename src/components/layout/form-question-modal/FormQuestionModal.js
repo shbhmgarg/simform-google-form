@@ -37,6 +37,9 @@ const FormQuestionModal = ({ close }) => {
         type: currentQuestion.questionType,
         options: currentQuestion.options.map((q) => q.optionText).join('\n')
       });
+      if (currentQuestion.questionType !== 'text') {
+        setOptionsArray(currentQuestion.options.map((o) => o.optionText));
+      }
     }
   }, [current]);
 

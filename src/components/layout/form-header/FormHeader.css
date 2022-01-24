@@ -21,3 +21,7 @@
   color: #202124;
   width: 120px;
 }
+
+input:disabled {
+  background-color: transparent;
+}

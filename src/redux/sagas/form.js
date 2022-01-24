@@ -35,8 +35,19 @@ export function* createNewForm(action) {
 
 async function getFormsAPIRequest() {
   try {
-    const res = await axios.get('http://localhost:8080/forms');
-    return res.data;
+    let res = await axios.get('http://localhost:8080/forms');
+    let result = Promise.all(
+      res.data.map(async (ele) => {
+        let ans = await axios.get(
+          `http://localhost:8080/responses?formId=${ele.id}`
+        );
+        ele.totalResponses = ans.data.length;
+        return ele;
+      })
+    );
+    result = await result;
+    console.log(result);
+    return result;
   } catch (error) {
     throw error;
   }
